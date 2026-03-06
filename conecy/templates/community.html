@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+{% block title %}Community – Conecy{% endblock %}
+
+{% block extra_styles %}
+.comm-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 24px 40px;
+    border-bottom: 1px solid var(--border);
+    background: var(--white);
+}
+.comm-header-left h2 { font-size: 22px; font-weight: 700; }
+.comm-header-left p { font-size: 14px; color: var(--text-light); margin-top: 2px; }
+.comm-body { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
+.filter-row {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 32px;
+}
+.filter-chip {
+    padding: 8px 20px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 500;
+    cursor: pointer;
+    border: 1.5px solid var(--border);
+    background: var(--white);
+    color: var(--text-mid);
+    transition: all 0.2s;
+}
+.filter-chip:hover { border-color: var(--purple); color: var(--purple); }
+.filter-chip.active { background: var(--purple); color: white; border-color: var(--purple); }
+.story-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 16px;
+    transition: box-shadow 0.2s;
+}
+.story-card:hover { box-shadow: var(--shadow-md); }
+.story-tag {
+    display: inline-block;
+    background: var(--purple-soft);
+    color: var(--purple);
+    font-size: 12px;
+    font-weight: 600;
+    padding: 4px 12px;
+    border-radius: 50px;
+    margin-bottom: 12px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+.story-text {
+    font-size: 15px;
+    color: var(--text-dark);
+    line-height: 1.75;
+    margin-bottom: 16px;
+}
+.story-meta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--text-light);
+}
+.story-responses {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    color: var(--text-mid);
+}
+.empty-state {
+    text-align: center;
+    padding: 80px 20px;
+    color: var(--text-light);
+}
+.empty-icon {
+    width: 72px; height: 72px;
+    background: var(--purple-soft);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    margin: 0 auto 20px;
+}
+.empty-state h3 { font-size: 17px; color: var(--text-mid); margin-bottom: 6px; }
+.empty-state p { font-size: 14px; }
+.empty-state a { color: var(--purple); font-weight: 500; }
+.share-modal-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.4);
+    display: flex; align-items: center; justify-content: center;
+    z-index: 100;
+    padding: 20px;
+    display: none;
+}
+.share-modal {
+    background: var(--white);
+    border-radius: 20px;
+    padding: 36px;
+    max-width: 520px;
+    width: 100%;
+    box-shadow: var(--shadow-md);
+}
+.share-modal h3 { font-size: 22px; font-weight: 700; margin-bottom: 6px; }
+.share-modal p { color: var(--text-mid); font-size: 14px; margin-bottom: 24px; }
+.form-group { margin-bottom: 18px; }
+.form-group label { display: block; font-size: 14px; font-weight: 500; margin-bottom: 8px; }
+.form-group select, .form-group textarea {
+    width: 100%;
+    border: 1.5px solid var(--border);
+    border-radius: 12px;
+    padding: 12px 16px;
+    font-size: 15px;
+    color: var(--text-dark);
+    outline: none;
+    transition: border-color 0.2s;
+    background: var(--bg);
+}
+.form-group select:focus, .form-group textarea:focus { border-color: var(--purple); }
+.form-group textarea { resize: vertical; min-height: 120px; }
+.modal-actions { display: flex; gap: 12px; margin-top: 8px; }
+.footer-disclaimer {
+    text-align: center;
+    padding: 24px;
+    font-size: 13px;
+    color: var(--text-light);
+    border-top: 1px solid var(--border);
+    margin-top: 40px;
+}
+{% endblock %}
+
+{% block content %}
+<div style="min-height:100vh;">
+    <div class="comm-header">
+        <div class="comm-header-left">
+            <div style="display:flex;align-items:center;gap:10px;margin-bottom:2px;">
+                <div class="logo-icon" style="width:28px;height:28px;font-size:14px;">c</div>
+                <h2>Community</h2>
+            </div>
+            <p>Real stories from real transitions</p>
+        </div>
+        <button class="btn btn-primary" onclick="openModal()">+ Share your story</button>
+    </div>
+
+    <div class="comm-body">
+        <div class="filter-row">
+            <button class="filter-chip active" data-cat="all">All</button>
+            <button class="filter-chip" data-cat="First Semester">First Semester</button>
+            <button class="filter-chip" data-cat="F1 Student">F1 Student</button>
+            <button class="filter-chip" data-cat="First Job">First Job</button>
+            <button class="filter-chip" data-cat="New City">New City</button>
+            <button class="filter-chip" data-cat="Other">Other</button>
+        </div>
+
+        <div id="stories-container"></div>
+    </div>
+
+    <div class="footer-disclaimer">
+        All posts are peer experiences only — not professional advice. If you need real-time support, please contact a crisis line.
+    </div>
+</div>
+
+<!-- Share Modal -->
+<div class="share-modal-overlay" id="share-modal">
+    <div class="share-modal">
+        <h3>Share your story</h3>
+        <p>Your post is anonymous. Help someone feel less alone.</p>
+        <div class="error-msg" id="story-error"></div>
+        <div class="form-group">
+            <label>Category</label>
+            <select id="story-cat">
+                <option>First Semester</option>
+                <option>F1 Student</option>
+                <option>First Job</option>
+                <option>New City</option>
+                <option>Other</option>
+            </select>
+        </div>
+        <div class="form-group">
+            <label>Your experience</label>
+            <textarea id="story-text" placeholder="Share what you went through and how you navigated it..."></textarea>
+        </div>
+        <div class="modal-actions">
+            <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+            <button class="btn btn-primary" onclick="submitStory()">Post anonymously</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+let currentCat = 'all';
+let stories = [];
+
+function openModal() {
+    document.getElementById('share-modal').style.display = 'flex';
+}
+function closeModal() {
+    document.getElementById('share-modal').style.display = 'none';
+    document.getElementById('story-error').classList.remove('show');
+    document.getElementById('story-text').value = '';
+}
+
+document.querySelectorAll('.filter-chip').forEach(chip => {
+    chip.addEventListener('click', () => {
+        document.querySelectorAll('.filter-chip').forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        currentCat = chip.dataset.cat;
+        renderStories();
+    });
+});
+
+function renderStories() {
+    const filtered = currentCat === 'all' ? stories : stories.filter(s => s.category === currentCat);
+    const container = document.getElementById('stories-container');
+    if (filtered.length === 0) {
+        container.innerHTML = `
+            <div class="empty-state">
+                <div class="empty-icon">👥</div>
+                <h3>No stories yet. Be the first to share your experience.</h3>
+                <p><a href="#" onclick="openModal();return false;">Share your story</a></p>
+            </div>`;
+        return;
+    }
+    container.innerHTML = filtered.map(s => `
+        <div class="story-card fade-in">
+            <div class="story-tag">${s.category}</div>
+            <p class="story-text">${s.content}</p>
+            <div class="story-meta">
+                <span>${s.timestamp}</span>
+                <span class="story-responses">💬 ${s.responses} ${s.responses === 1 ? 'response' : 'responses'}</span>
+            </div>
+        </div>
+    `).join('');
+}
+
+async function submitStory() {
+    const text = document.getElementById('story-text').value.trim();
+    const cat = document.getElementById('story-cat').value;
+    const errEl = document.getElementById('story-error');
+    if (!text) { errEl.textContent = 'Please write something before posting.'; errEl.classList.add('show'); return; }
+    errEl.classList.remove('show');
+
+    const res = await fetch('/api/stories', {
+        method: 'POST',
+        headers: {'Content-Type': 'application/json'},
+        body: JSON.stringify({content: text, category: cat})
+    });
+    const data = await res.json();
+    if (!res.ok) {
+        errEl.textContent = data.error;
+        errEl.classList.add('show');
+        return;
+    }
+    stories.unshift(data);
+    renderStories();
+    closeModal();
+}
+
+async function loadStories() {
+    const res = await fetch('/api/stories');
+    stories = await res.json();
+    renderStories();
+}
+loadStories();
+{% endblock %}

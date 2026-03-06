@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+{% block title %}Conecy – Human Connection, Anonymously{% endblock %}
+
+{% block extra_styles %}
+.hero {
+    text-align: center;
+    padding: 80px 20px 60px;
+}
+.hero h1 {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(42px, 6vw, 72px);
+    line-height: 1.1;
+    margin-bottom: 24px;
+    color: var(--text-dark);
+}
+.hero h1 em {
+    font-style: italic;
+    color: var(--gold);
+}
+.hero p {
+    font-size: 18px;
+    color: var(--text-mid);
+    max-width: 480px;
+    margin: 0 auto 40px;
+    line-height: 1.7;
+}
+.hero-actions {
+    display: flex;
+    gap: 14px;
+    justify-content: center;
+    flex-wrap: wrap;
+}
+.cards-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 0 20px 60px;
+}
+@media (max-width: 560px) { .cards-row { grid-template-columns: 1fr; } }
+.mode-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 20px;
+    padding: 32px 28px;
+    cursor: pointer;
+    transition: all 0.25s ease;
+    text-decoration: none;
+    color: inherit;
+    display: block;
+}
+.mode-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-md); }
+.mode-card.gold { background: var(--gold-soft); border-color: #F5D08A; }
+.mode-card.purple { background: var(--purple-soft); border-color: #C9C3FA; }
+.mode-icon {
+    width: 52px; height: 52px;
+    border-radius: 14px;
+    background: white;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 24px;
+    margin-bottom: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+}
+.mode-card h3 { font-size: 20px; font-weight: 700; margin-bottom: 8px; }
+.mode-card p { font-size: 14px; color: var(--text-mid); margin-bottom: 18px; line-height: 1.6; }
+.mode-card ul { list-style: none; }
+.mode-card ul li {
+    font-size: 13px;
+    color: var(--text-mid);
+    padding: 3px 0;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.mode-card ul li::before {
+    content: '';
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--text-light);
+    flex-shrink: 0;
+}
+.footer-line {
+    text-align: center;
+    padding: 0 0 40px;
+    color: var(--text-light);
+    font-size: 14px;
+}
+.footer-line a {
+    color: var(--purple);
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    margin-top: 8px;
+}
+{% endblock %}
+
+{% block content %}
+<div style="background: var(--bg);">
+    <nav class="nav">
+        <div class="logo">
+            <div class="logo-icon">c</div>
+            conecy
+        </div>
+    </nav>
+
+    <div class="hero fade-in">
+        <h1>Human connection,<br><em>anonymously</em></h1>
+        <p>A safe space to be heard or to offer your presence. No judgments. No identity. Just genuine human support.</p>
+        <div class="hero-actions">
+            <a href="/safe-space" class="btn btn-primary">Get Started →</a>
+            <a href="/community" class="btn btn-outline">Read Stories</a>
+        </div>
+    </div>
+
+    <div class="cards-row fade-in" style="animation-delay:0.15s">
+        <a href="/safe-space?mode=share" class="mode-card gold">
+            <div class="mode-icon">🤍</div>
+            <h3>I need someone to listen</h3>
+            <p>Share what's on your mind with a compassionate stranger</p>
+            <ul>
+                <li>Connect with a trained listener</li>
+                <li>Share freely in a safe space</li>
+                <li>No judgment, just support</li>
+            </ul>
+        </a>
+        <a href="/safe-space?mode=listen" class="mode-card purple">
+            <div class="mode-icon">👂</div>
+            <h3>I want to listen</h3>
+            <p>Offer your presence and support to someone in need</p>
+            <ul>
+                <li>Complete brief training first</li>
+                <li>Help someone feel heard</li>
+                <li>Make a real difference</li>
+            </ul>
+        </a>
+    </div>
+
+    <div class="footer-line fade-in" style="animation-delay:0.25s">
+        <div>Creating ripples of compassion, one conversation at a time</div>
+        <a href="/community">👥 Read community stories</a>
+    </div>
+</div>
+{% endblock %}

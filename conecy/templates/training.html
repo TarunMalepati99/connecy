@@ -1,0 +1,336 @@
+{% extends "base.html" %}
+{% block title %}Listener Training – Conecy{% endblock %}
+
+{% block extra_styles %}
+.training-wrap { max-width: 800px; margin: 0 auto; padding: 32px 20px; }
+.back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    color: var(--text-mid);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 28px;
+    cursor: pointer;
+    transition: color 0.2s;
+}
+.back-link:hover { color: var(--purple); }
+.training-header {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-bottom: 32px;
+}
+.training-icon {
+    width: 64px; height: 64px;
+    background: linear-gradient(135deg, #A78BFA, #EC4899);
+    border-radius: 18px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 28px;
+    flex-shrink: 0;
+}
+.training-header h1 { font-size: 28px; font-weight: 700; margin-bottom: 4px; }
+.training-header p { color: var(--text-mid); font-size: 15px; }
+.progress-card {
+    background: var(--white);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 32px;
+}
+.progress-label {
+    display: flex;
+    justify-content: space-between;
+    font-size: 15px;
+    font-weight: 500;
+    margin-bottom: 12px;
+}
+.progress-label span:last-child { color: var(--text-light); }
+.progress-bar-track {
+    height: 8px;
+    background: var(--border);
+    border-radius: 100px;
+    overflow: hidden;
+}
+.progress-bar-fill {
+    height: 100%;
+    background: linear-gradient(90deg, var(--purple), var(--purple-light));
+    border-radius: 100px;
+    transition: width 0.5s ease;
+}
+.modules-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+@media (max-width: 600px) { .modules-grid { grid-template-columns: 1fr; } }
+.module-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    position: relative;
+    transition: all 0.25s;
+}
+.module-card.active {
+    border-color: var(--purple);
+    background: linear-gradient(135deg, rgba(107,92,246,0.04), rgba(139,127,248,0.02));
+}
+.module-card.active:hover { box-shadow: var(--shadow-md); transform: translateY(-2px); }
+.module-card.locked { opacity: 0.65; }
+.module-num {
+    width: 32px; height: 32px;
+    background: var(--purple);
+    color: white;
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 14px;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+.lock-icon {
+    width: 32px; height: 32px;
+    background: var(--bg);
+    border: 1.5px solid var(--border);
+    border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 15px;
+    margin-bottom: 14px;
+}
+.module-card h3 { font-size: 16px; font-weight: 700; margin-bottom: 4px; }
+.module-duration { font-size: 12px; color: var(--text-light); margin-bottom: 12px; }
+.module-card p { font-size: 14px; color: var(--text-mid); line-height: 1.6; margin-bottom: 18px; }
+.module-card .btn { font-size: 14px; padding: 10px 20px; }
+
+/* Lesson modal */
+.lesson-overlay {
+    position: fixed; inset: 0;
+    background: rgba(0,0,0,0.5);
+    display: none;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    padding: 20px;
+}
+.lesson-modal {
+    background: var(--white);
+    border-radius: 24px;
+    padding: 40px;
+    max-width: 560px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: var(--shadow-md);
+}
+.lesson-modal h2 { font-size: 24px; font-weight: 700; margin-bottom: 6px; }
+.lesson-modal .duration { color: var(--text-light); font-size: 13px; margin-bottom: 20px; }
+.lesson-content p { font-size: 15px; color: var(--text-mid); line-height: 1.8; margin-bottom: 16px; }
+.lesson-content h4 { font-size: 15px; font-weight: 700; color: var(--text-dark); margin: 20px 0 8px; }
+.lesson-content ul { padding-left: 20px; }
+.lesson-content ul li { font-size: 14px; color: var(--text-mid); margin-bottom: 6px; line-height: 1.6; }
+.lesson-actions { display: flex; gap: 12px; margin-top: 28px; }
+{% endblock %}
+
+{% block content %}
+<div class="training-wrap">
+    <a class="back-link" href="/home">← Back to Home</a>
+
+    <div class="training-header fade-in">
+        <div class="training-icon">📖</div>
+        <div>
+            <h1>Listener Training</h1>
+            <p>Learn to offer compassionate support</p>
+        </div>
+    </div>
+
+    <div class="progress-card fade-in" style="animation-delay:0.1s">
+        <div class="progress-label">
+            <span>Your Progress</span>
+            <span id="progress-text">0 / 4</span>
+        </div>
+        <div class="progress-bar-track">
+            <div class="progress-bar-fill" id="progress-fill" style="width:0%"></div>
+        </div>
+        <p style="font-size:13px;color:var(--text-light);margin-top:10px;" id="progress-sub">Complete all 4 lessons to become a certified listener</p>
+    </div>
+
+    <h2 style="font-size:18px;font-weight:700;margin-bottom:16px;" class="fade-in" style="animation-delay:0.15s">Training Modules</h2>
+
+    <div class="modules-grid fade-in" style="animation-delay:0.2s" id="modules-grid"></div>
+</div>
+
+<!-- Lesson Modal -->
+<div class="lesson-overlay" id="lesson-overlay">
+    <div class="lesson-modal">
+        <h2 id="lesson-title"></h2>
+        <div class="duration" id="lesson-duration"></div>
+        <div class="lesson-content" id="lesson-content"></div>
+        <div class="lesson-actions">
+            <button class="btn btn-outline" onclick="closeLesson()">Close</button>
+            <button class="btn btn-primary" id="complete-btn" onclick="completeLesson()">Mark as Complete ✓</button>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block scripts %}
+const modules = [
+    {
+        id: 0,
+        title: 'The Art of Empathetic Listening',
+        duration: '3 min read',
+        desc: 'Learn the fundamental principles of empathetic listening and why it\'s transformative.',
+        content: `
+            <p>Empathetic listening is more than just staying quiet while someone speaks. It's about creating a space where the other person feels genuinely seen and heard.</p>
+            <h4>What makes listening empathetic?</h4>
+            <ul>
+                <li>Giving your full, undivided attention — put away distractions</li>
+                <li>Suspending judgment entirely, even internal judgment</li>
+                <li>Listening to understand, not to respond or fix</li>
+                <li>Acknowledging feelings without minimizing them</li>
+            </ul>
+            <h4>The power of presence</h4>
+            <p>Research shows that feeling heard is one of the most powerful healing experiences a person can have. You don't need to have answers. Your presence alone is the gift.</p>
+            <p>Simply saying "That sounds really hard. Thank you for sharing that with me." can mean more than any advice ever could.</p>
+        `
+    },
+    {
+        id: 1,
+        title: 'Active Listening Techniques',
+        duration: '4 min read',
+        desc: 'Master the techniques that demonstrate genuine attention and understanding.',
+        content: `
+            <p>Active listening is a set of conscious behaviors that signal to the speaker that you are fully present and engaged.</p>
+            <h4>Core techniques</h4>
+            <ul>
+                <li><strong>Reflecting:</strong> Paraphrase what they said. "It sounds like you're feeling overwhelmed by the workload."</li>
+                <li><strong>Validating:</strong> Affirm that their feelings make sense. "That would be hard for anyone."</li>
+                <li><strong>Open questions:</strong> Ask questions that invite more sharing. "How did that make you feel?"</li>
+                <li><strong>Silence:</strong> Don't rush to fill silences. Pauses give people space to go deeper.</li>
+            </ul>
+            <h4>What to avoid</h4>
+            <ul>
+                <li>Jumping to solutions or advice before they're requested</li>
+                <li>Comparing their experience to your own ("That happened to me too...")</li>
+                <li>Minimizing ("At least you have your health!")</li>
+                <li>Asking multiple questions at once</li>
+            </ul>
+        `
+    },
+    {
+        id: 2,
+        title: 'What to Say (and Not Say)',
+        duration: '4 min read',
+        desc: 'Navigate conversations with phrases that support and avoid common pitfalls.',
+        content: `
+            <p>Words matter enormously. Some phrases open people up; others inadvertently close them down or minimize their experience.</p>
+            <h4>Phrases that help</h4>
+            <ul>
+                <li>"I hear you. That sounds really difficult."</li>
+                <li>"Thank you for trusting me with this."</li>
+                <li>"You don't have to figure this out alone."</li>
+                <li>"Take as much time as you need."</li>
+                <li>"Your feelings make complete sense."</li>
+            </ul>
+            <h4>Phrases to avoid</h4>
+            <ul>
+                <li>"You should..." / "Have you tried..."</li>
+                <li>"It could be worse."</li>
+                <li>"Everything happens for a reason."</li>
+                <li>"Just stay positive!"</li>
+                <li>"I know exactly how you feel."</li>
+            </ul>
+            <p>Remember: your role is not to fix, advise, or cheer up. It's to witness and be present.</p>
+        `
+    },
+    {
+        id: 3,
+        title: 'Setting Healthy Boundaries',
+        duration: '3 min read',
+        desc: 'Learn when and how to maintain boundaries for sustainable compassion.',
+        content: `
+            <p>Listening with compassion is a gift — but it requires you to also protect your own wellbeing. Sustainable compassion starts with boundaries.</p>
+            <h4>Why boundaries matter</h4>
+            <p>Without boundaries, compassion fatigue can set in. You may find yourself drained, unable to show up for others, or absorbing their pain as your own. Boundaries are not selfish — they're what make long-term support possible.</p>
+            <h4>Healthy boundary practices</h4>
+            <ul>
+                <li>It's okay to end a chat if you feel overwhelmed: "I need to step away now, but I'm glad I could be here for you."</li>
+                <li>You are not responsible for solving their problems</li>
+                <li>If someone expresses thoughts of self-harm, gently encourage them to contact a crisis line</li>
+                <li>Take breaks between conversations to decompress</li>
+            </ul>
+            <p>You are a peer supporter, not a therapist. Recognizing that distinction protects both you and the people you support.</p>
+        `
+    }
+];
+
+let completed = JSON.parse(localStorage.getItem('conecy_training') || '[]');
+let currentLesson = null;
+
+function updateProgress() {
+    const count = completed.length;
+    document.getElementById('progress-text').textContent = `${count} / 4`;
+    document.getElementById('progress-fill').style.width = `${(count / 4) * 100}%`;
+    if (count === 4) {
+        document.getElementById('progress-sub').textContent = '🎉 Certified! You can now begin listening.';
+    }
+}
+
+function renderModules() {
+    const grid = document.getElementById('modules-grid');
+    grid.innerHTML = modules.map((m, i) => {
+        const done = completed.includes(i);
+        const isFirst = i === 0;
+        const prevDone = i === 0 || completed.includes(i - 1);
+        const unlocked = prevDone || done;
+        return `
+        <div class="module-card ${isFirst || unlocked ? 'active' : 'locked'}">
+            ${unlocked ? `<div class="module-num">${done ? '✓' : i + 1}</div>` : `<div class="lock-icon">🔒</div>`}
+            <h3>${m.title}</h3>
+            <div class="module-duration">${m.duration}</div>
+            <p>${m.desc}</p>
+            ${unlocked ? `<button class="btn ${done ? 'btn-outline' : 'btn-primary'}" onclick="openLesson(${i})">${done ? 'Review' : 'Continue →'}</button>` : ''}
+        </div>`;
+    }).join('');
+    updateProgress();
+}
+
+function openLesson(id) {
+    const m = modules[id];
+    currentLesson = id;
+    document.getElementById('lesson-title').textContent = m.title;
+    document.getElementById('lesson-duration').textContent = m.duration;
+    document.getElementById('lesson-content').innerHTML = m.content;
+    const btn = document.getElementById('complete-btn');
+    if (completed.includes(id)) {
+        btn.textContent = '✓ Completed';
+        btn.disabled = true;
+    } else {
+        btn.textContent = 'Mark as Complete ✓';
+        btn.disabled = false;
+    }
+    document.getElementById('lesson-overlay').style.display = 'flex';
+}
+
+function closeLesson() {
+    document.getElementById('lesson-overlay').style.display = 'none';
+}
+
+function completeLesson() {
+    if (!completed.includes(currentLesson)) {
+        completed.push(currentLesson);
+        localStorage.setItem('conecy_training', JSON.stringify(completed));
+    }
+    closeLesson();
+    renderModules();
+    if (completed.length === 4) {
+        setTimeout(() => {
+            if (confirm('🎉 You\'ve completed all training modules! Ready to start listening?')) {
+                window.location.href = '/home';
+            }
+        }, 300);
+    }
+}
+
+renderModules();
+{% endblock %}
