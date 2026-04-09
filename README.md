@@ -34,7 +34,7 @@
 </div>
 
 <br/>
-
+     
 ## ✦ What is Conecy?
 
 Conecy is an **anonymous peer support platform** designed for people navigating life transitions — first semesters, new cities, first jobs, or simply hard days. It connects people who need to be heard with trained volunteer listeners, all without revealing anyone's identity.
